@@ -1,4 +1,4 @@
-import React from "react"
+import React, {useState, useEffect} from "react"
 import {viborka} from './viborka'
 import {
   ComposedChart,
@@ -11,26 +11,26 @@ import {
 } from "recharts"
 
 export const Teorver = () => {
-    const [vibArr, setVibArr] = React.useState([])
-    const [funArr, setFunArr] = React.useState([])
-    const [zad5, setZad5] = React.useState([])
-    const[flag, setFlag] = React.useState(true)
-    const[sampleAverage, setSampleAverage]= React.useState(0)
-    const[sampleVariance1, setSampleVariance1]= React.useState(0)
-    const[sampleVariance2, setSampleVariance2]= React.useState(0)
-
-    const[conIntForMathExp1, setConIntForMathExp1]= React.useState(0)
-    const[conIntForMathExp2, setConIntForMathExp2]= React.useState(0)
-    const[conIntForMathExp3, setConIntForMathExp3]= React.useState(0)
-    const[conIntForMathExp4, setConIntForMathExp4]= React.useState(0)
-    const[conIntForVariance1, setConIntForVariance1]= React.useState(0)
-    const[conIntForVariance2, setConIntForVariance2]= React.useState(0)
-    const[conIntForVariance3, setConIntForVariance3]= React.useState(0)
-    const[conIntForVariance4, setConIntForVariance4]= React.useState(0)
-    const[statThresholdPerson1, setStatThresholdPerson1]= React.useState(0)
-    const[statThresholdPerson2, setStatThresholdPerson2]= React.useState(0)
-    const[critThresholdPerson1, setCritThresholdPerson1]= React.useState(0)
-    const[critThresholdPerson2, setCritThresholdPerson2]= React.useState(0)
+    const [vibArr, setVibArr] = useState([])
+    const [vibArr2, setVibArr2] = useState([])
+    const [funArr, setFunArr] = useState([])
+    const [zad5, setZad5] = useState([])
+    const[flag, setFlag] = useState(true)
+    const[sampleAverage, setSampleAverage] = useState(0)
+    const[sampleVariance1, setSampleVariance1] = useState(0)
+    const[sampleVariance2, setSampleVariance2] = useState(0)
+    const[conIntForMathExp1, setConIntForMathExp1] = useState(0)
+    const[conIntForMathExp2, setConIntForMathExp2] = useState(0)
+    const[conIntForMathExp3, setConIntForMathExp3] = useState(0)
+    const[conIntForMathExp4, setConIntForMathExp4] = useState(0)
+    const[conIntForVariance1, setConIntForVariance1] = useState(0)
+    const[conIntForVariance2, setConIntForVariance2] = useState(0)
+    const[conIntForVariance3, setConIntForVariance3] = useState(0)
+    const[conIntForVariance4, setConIntForVariance4] = useState(0)
+    const[statThresholdPerson1, setStatThresholdPerson1] = useState(0)
+    const[statThresholdPerson2, setStatThresholdPerson2] = useState(0)
+    const[critThresholdPerson1, setCritThresholdPerson1] = useState(0)
+    const[critThresholdPerson2, setCritThresholdPerson2] = useState(0)
 
     const mathematicalExpectation = 5.25
     const variance = 1.21
@@ -64,15 +64,14 @@ export const Teorver = () => {
       return (1 + functionErrors((x - m) / Math.sqrt(v * 2))) / 2
     }
 
-    React.useEffect(() => {
+    useEffect(() => {
       if(flag){
         const vib = viborka.sort((a, b) => { return a - b })
+        let data = []
         let min = vib[0]
         let max = vib[vib.length - 1]
-        let a = (max - min)/10
+        let a = (max - min) / 10
         let a2 = min + a
-        let i = 0
-        let data = []
         let arr =[]
         vib.map((num) => {
           if(arr.length === 0)
@@ -95,32 +94,9 @@ export const Teorver = () => {
                 quantity: 1,
               }
             ]
-            data = [
-              ...data,
-              {
-                inter1: a2 - a,
-                inter2: a2
-              }
-            ]
             a2 += a
-            ++i
           }  
         })
-        data = [
-          ...data,
-          {
-            inter1: a2 - a,
-            inter2: a2,
-            quantity: 0
-          }
-        ]
-        arr.map((num, index) => {
-          data[index] = {
-            ...data[index],
-            quantity: num.quantity
-          }
-        })
-        setZad5(data)
         setVibArr(arr)
         a = 0.1
         a2 = min
@@ -165,13 +141,63 @@ export const Teorver = () => {
         let sum = 0
         viborka.map((num) => { sum += (num - mathematicalExpectation)**2 })
         let conVar1 = sum * 2 / (1.96 + Math.sqrt(2 * n - 1))**2
-        let conVar2 = sum * 2 / (Math.sqrt(2 * n - 1))**2
+        let conVar2 = sum * 2 / (-1.96 + Math.sqrt(2 * n - 1))**2
         setConIntForVariance1(conVar1)
         setConIntForVariance2(conVar2)
         let conVar3 = n * S2 * 2 / (1.96 + Math.sqrt(2 * (n - 1) - 1))**2
-        let conVar4 = n * S2 * 2 / (Math.sqrt(2 * (n - 1) - 1))**2
+        let conVar4 = n * S2 * 2 / (-1.96 + Math.sqrt(2 * (n - 1) - 1))**2
         setConIntForVariance3(conVar3)
         setConIntForVariance4(conVar4)
+        a = (max - min) / 6
+        a2 = min + a
+        arr = []
+        vib.map((num) => {
+          if(arr.length === 0)
+            arr = [
+              {
+                name:  (min + a / 2).toFixed(4),
+                quantity: 1,
+              }
+            ]
+          else if(num <= a2)
+            arr[arr.length - 1] = {
+              name:  arr[arr.length - 1].name,
+              quantity: arr[arr.length - 1].quantity + 1,
+            }
+          else{ 
+            arr = [
+              ...arr,
+              {
+                name:  (a2 + a / 2).toFixed(4),
+                quantity: 1,
+              }
+            ]
+            data = [
+              ...data,
+              {
+                inter1: a2 - a,
+                inter2: a2
+              }
+            ]
+            a2 += a
+          }  
+        })
+        data = [
+          ...data,
+          {
+            inter1: a2 - a,
+            inter2: a2,
+            quantity: 0
+          }
+        ]
+        arr.map((num, index) => {
+          data[index] = {
+            ...data[index],
+            quantity: num.quantity
+          }
+        })
+        setZad5(data)
+        setVibArr2(arr)
         let stat1 = 0
         let pk
         data.map((num) => {
@@ -185,18 +211,21 @@ export const Teorver = () => {
           stat2 += (num.quantity - n * pk)**2 / n / pk
         })
         setStatThresholdPerson2(stat2)
-        setCritThresholdPerson1(16.919)
-        setCritThresholdPerson2(14.067)
+        setCritThresholdPerson1(11.07)
+        setCritThresholdPerson2(7.815)
       }
       setFlag(false)
     })
+
     const [width, setWidth] = React.useState(window.innerWidth)
-    React.useEffect(() => {setInterval(() =>{ setWidth(window.innerWidth)}, 0.1)})
+
+    useEffect(() => {setInterval(() =>{ setWidth(window.innerWidth)}, 0.1)})
+
     return (
       <div style={{alignItems: 'center', justifyContent: 'center'}}>
-        <div style={{width: width > 1000 ? width - (width - 1000): width - 50, fontSize: '14px'}}>
+        <div style={{width: width > 1000 ? 1000: width - 50, fontSize: '14px'}}>
           <ComposedChart
-            width={width > 1000 ? width - (width - 1000): width - 50}
+            width={width > 1000 ? 1000: width - 50}
             height={400}
             data={vibArr}
             margin={{
@@ -209,12 +238,12 @@ export const Teorver = () => {
             <XAxis dataKey="name" scale="band"/>
             <YAxis/>
             <Tooltip/>
-            <Bar dataKey="quantity" barSize={100} fill="#413ea0"/>
+            <Bar dataKey="quantity" barSize={500} fill="#413ea0"/>
           </ComposedChart>
         </div>
-        <div style={{width: width > 1000 ? width - (width - 1000): width - 50, fontSize: '14px'}}>
+        <div style={{width: width > 1000 ? 1000: width - 50, fontSize: '14px'}}>
         <ComposedChart
-          width={width > 1000 ? width - (width - 1000): width - 50}
+          width={width > 1000 ? 1000: width - 50}
           height={400}
           data={funArr}
           margin={{
@@ -245,9 +274,29 @@ export const Teorver = () => {
           <div style={{marginBottom: 10}}/>
           <tr><th>Доверительный интервал для DX при неизвестном MX:</th><td style={{textAlign: 'center'}}>{conIntForVariance3.toFixed(4)}</td><td style={{textAlign: 'center'}}>{conIntForVariance4.toFixed(4)}</td></tr>
           <div style={{marginBottom: 10}}/>
-          <tr><th>Статистика и порог критерия Пирсона при известных параметрах распределения:</th><td style={{textAlign: 'center'}}>{statThresholdPerson1.toFixed(4)}</td><td style={{textAlign: 'center'}}>{critThresholdPerson1.toFixed(4)}</td></tr>
+        </table>
+        <div style={{width: width > 1000 ? 1000: width - 50, fontSize: '14px'}}>
+          <ComposedChart
+            width={width > 1000 ? 1000: width - 50}
+            height={400}
+            data={vibArr2}
+            margin={{
+              top: 5,
+              right: 15,
+              left: -25,
+              bottom: 5
+            }}>
+            <CartesianGrid stroke="#f5f5f5"/>
+            <XAxis dataKey="name" scale="band"/>
+            <YAxis/>
+            <Tooltip/>
+            <Bar dataKey="quantity" barSize={500} fill="#413ea0"/>
+          </ComposedChart>
+        </div>
+        <table style={{ margin: '0 1000 0 1000', width: '100%', textAlign: 'left'}}>
+          <tr><th>Статистика и порог критерия Пирсона при известных параметрах распределения:</th><td style={{textAlign: 'center'}}>{statThresholdPerson1.toFixed(4)}</td><td style={{textAlign: 'center'}}>{critThresholdPerson1}</td></tr>
           <div style={{marginBottom: 10}}/>
-          <tr><th>Статистика и порог критерия Пирсона при неизвестных параметрах распределения:</th><td style={{textAlign: 'center'}}>{statThresholdPerson2.toFixed(4)}</td><td style={{textAlign: 'center'}}>{critThresholdPerson2.toFixed(4)}</td></tr>
+          <tr><th>Статистика и порог критерия Пирсона при неизвестных параметрах распределения:</th><td style={{textAlign: 'center'}}>{statThresholdPerson2.toFixed(4)}</td><td style={{textAlign: 'center'}}>{critThresholdPerson2}</td></tr>
         </table>
         <table style={{ width: '100%', textAlign: 'center'}}>
           <tr><th>Левые границы интервалов</th><th>Правые границы интервалов</th><th>Частоты попадания в интервалы</th></tr>
