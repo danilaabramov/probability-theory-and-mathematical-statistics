@@ -14,7 +14,7 @@ export const Teorver = () => {
     const [vibArr, setVibArr] = useState([])
     const [vibArr2, setVibArr2] = useState([])
     const [funArr, setFunArr] = useState([])
-    const [zad5, setZad5] = useState([])
+    const [tab, setTab] = useState([])
     const[flag, setFlag] = useState(true)
     const[sampleAverage, setSampleAverage] = useState(0)
     const[sampleVariance1, setSampleVariance1] = useState(0)
@@ -94,16 +94,38 @@ export const Teorver = () => {
                 quantity: 1,
               }
             ]
+            data = [
+              ...data,
+              {
+                inter1: a2 - a,
+                inter2: a2
+              }
+            ]
             a2 += a
           }  
         })
+        data = [
+          ...data,
+          {
+            inter1: a2 - a,
+            inter2: a2,
+            quantity: 0
+          }
+        ]
+        arr.map((num, index) => {
+          data[index] = {
+            ...data[index],
+            quantity: num.quantity
+          }
+        })
+        setTab(data)
         setVibArr(arr)
         a = 0.1
         a2 = min
-        let arr2 =[]
+        arr =[]
         while(a2 < vib[vib.length - 1]) {
-          arr2 = [
-            ...arr2,
+          arr = [
+            ...arr,
             {
               name:  a2.toFixed(4),
               density: density(a2),
@@ -112,15 +134,15 @@ export const Teorver = () => {
           ]
           a2 += a
         }
-        arr2 = [
-          ...arr2,
+        arr = [
+          ...arr,
           {
             name:  vib[vib.length - 1].toFixed(4),
             density: density(vib[vib.length - 1]),
             function: functionDistributions(vib[vib.length - 1])
           }
         ]
-        setFunArr(arr2)
+        setFunArr(arr)
         let X = 0
         viborka.map((num) => { X += num })
         X /= viborka.length
@@ -151,6 +173,7 @@ export const Teorver = () => {
         a = (max - min) / 6
         a2 = min + a
         arr = []
+        data = []
         vib.map((num) => {
           if(arr.length === 0)
             arr = [
@@ -196,7 +219,6 @@ export const Teorver = () => {
             quantity: num.quantity
           }
         })
-        setZad5(data)
         setVibArr2(arr)
         let stat1 = 0
         let pk
@@ -260,8 +282,8 @@ export const Teorver = () => {
           <Line dataKey="density"  fill="#05F976" />
         </ComposedChart>
       </div>
-      <div style={{marginLeft: 20,}}>
-        <table style={{ margin: '0 1000 0 1000', width: '100%', textAlign: 'left'}}>
+      <div style={{marginLeft: 20, marginRight: 20}}>
+        <table style={{ width: '100%', textAlign: 'left'}}>
           <tr><th>Выборочное среднее:</th><td style={{textAlign: 'center'}} colspan="2">{sampleAverage.toFixed(4)}</td></tr>
           <div style={{marginBottom: 10}}/>
           <tr><th>Выборочная дисперсия:</th><td style={{textAlign: 'center'}}> {sampleVariance1.toFixed(4)}</td><td style={{textAlign: 'center'}}> {sampleVariance2.toFixed(4)}</td></tr>
@@ -275,7 +297,7 @@ export const Teorver = () => {
           <tr><th>Доверительный интервал для DX при неизвестном MX:</th><td style={{textAlign: 'center'}}>{conIntForVariance3.toFixed(4)}</td><td style={{textAlign: 'center'}}>{conIntForVariance4.toFixed(4)}</td></tr>
           <div style={{marginBottom: 10}}/>
         </table>
-        <div style={{width: width > 1000 ? 1000: width - 50, fontSize: '14px'}}>
+        <div style={{width: width > 1000 ? 1000: width - 50, fontSize: '14px', marginLeft: -20, marginRight: -20}}>
           <ComposedChart
             width={width > 1000 ? 1000: width - 50}
             height={400}
@@ -301,7 +323,7 @@ export const Teorver = () => {
         <table style={{ width: '100%', textAlign: 'center'}}>
           <tr><th>Левые границы интервалов</th><th>Правые границы интервалов</th><th>Частоты попадания в интервалы</th></tr>
           {
-            zad5.map((num) => {
+            tab.map((num) => {
               return(
                 <tr><td>{num.inter1.toFixed(4)}</td><td>{num.inter2.toFixed(4)}</td><td>{num.quantity}</td></tr>
               )
