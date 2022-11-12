@@ -1,0 +1,13 @@
+directories:
+  output: dist
+  buildResources: assets
+files:
+  - filter:
+      - build/**/*
+extraMetadata:
+  main: build/electron.js
+appId: react.electron
+win:
+  icon: public/favicon.ico
+extends: react-cra
+electronVersion: 11.4.6
